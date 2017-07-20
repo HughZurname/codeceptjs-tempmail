@@ -40,13 +40,13 @@ class Mailbox extends Helper {
         .then(a => this.mailbox.address = a)
     )
 
-    _genNamedMail = (str) => (
+    _genNamedMail = (str = this.mailbox.address) => (
         _fetchTransform('/request/domains/')
         .then(r => str + _randArr(r))
         .then(a => this.mailbox.address = a)
     )
 
-    createMailbox = (name) => (
+    createMailbox = (name = this.mailbox.address) => (
         name ? _genNamedMail(name).then(getMessages) : _genRandomMail().then(getMessages)
     )
 
