@@ -5,6 +5,20 @@
   "main": "index.js",
   "author": "Craig de Gouveia <craig.degouveia@gmail.com>",
   "license": "MIT",
+    "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HughZurname/codeceptjs-tempmail.git"
+  },
+  "keywords": [
+    "codeceptjs",
+    "temp-mail.ru",
+    "mailbox",
+    "test"
+  ],
+  "bugs": {
+    "url": "https://github.com/HughZurname/codeceptjs-tempmail/issues"
+  },
+  "homepage": "https://github.com/HughZurname/codeceptjs-tempmail#readme",
   "dependencies": {
     "crypto": "^0.0.3",
     "node-fetch": "^1.7.1"
