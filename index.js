@@ -19,7 +19,7 @@ class Mailbox extends Helper {
     }
 
     _init() {
-        createMailbox()
+        createMailbox(null)
     }
 
     _hashAddress = (str) => (new Promise((resolve, reject) => (
