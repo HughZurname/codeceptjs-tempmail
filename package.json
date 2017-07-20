@@ -1,11 +1,11 @@
 {
   "name": "codeceptjs-tempmail",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Codecept Helper using temp-mail.ru api for email testing",
   "main": "index.js",
   "author": "Craig de Gouveia <craig.degouveia@gmail.com>",
   "license": "MIT",
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/HughZurname/codeceptjs-tempmail.git"
   },
