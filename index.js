@@ -1,6 +1,43 @@
 const crypto = require('crypto');
 const fetch = require('node-fetch');
 
+const apiUrl = 'http://api.temp-mail.ru'
+
+const _hashAddress = (str) => (new Promise((resolve, reject) => (
+    str ? resolve(crypto.createHash('md5').update(str).digest('hex')) : reject("No string provided")
+)))
+
+const _transformResponse = (res) => (res.json())
+
+const _fetchTransform = (path) => (fetch(`${apiUrl}${path || ''}/format/json/`).then(_transformResponse))
+
+const _randArr = (arr) => (arr[Math.floor(Math.random() * arr.length)])
+
+const _randStr = () => (Math.random().toString(32).substring(2))
+
+const _genRandomMail = () => (
+    _fetchTransform('/request/domains/')
+    .then(r => _randStr() + _randArr(r))
+)
+
+const _genNamedMail = (str) => (
+    _fetchTransform('/request/domains/')
+    .then(r => str + _randArr(r))
+)
+
+const _createAddress = (name) => (
+    name ? _genNamedMail(name) : _genRandomMail()
+)
+
+const _deleteMessage = (m) => (
+    _fetchTransform(`/request/delete/id/${m}`)
+)
+
+const _getMessages = (addr) => (
+    _hashAddress(addr)
+    .then(hash => _fetchTransform(`/request/mail/id/${hash}`))
+)
+
 /**
  * Helper with queryable diespoable mailbox api for use in tests.
  */
@@ -10,7 +47,7 @@ class Mailbox extends Helper {
      * @param {Object} config configuration can be overridded by values found in `codecept.json
      */
     constructor(config) {
-        this.apiUrl = config.apiUrl || 'http://api.temp-mail.ru'
+        super(config)
         this.mailbox = {
             address: '',
             messages: []
@@ -18,59 +55,32 @@ class Mailbox extends Helper {
     }
 
     _init() {
-        return this.createMailbox(null);
+        this.createMailbox(null)
     }
 
-    _hashAddress(str) {
-        return new Promise((resolve, reject) => (
-            str ? resolve(crypto.createHash("md5").update(str).digest("hex")) : reject("No string provided")));
+    createMailbox(x) {
+        return _createAddress(x).then(a => this.mailbox.address = a)
+            .then(_getMessages)
+            .then(m => this.mailbox.messages = m)
     }
 
-    _transformResponse(res) {
-        return res.json();
+    deleteMessage(x) {
+        return _deleteMessage(x)
     }
 
-    _fetchTransform(path) {
-        return fetch(`${this.apiUrl}${path || ""}/format/json/`).then(this._transformResponse);
-    }
-
-    _randArr(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    _randStr() {
-        return Math.random().toString(32).substring(2);
-    }
-
-    _genRandomMail() {
-        return this._fetchTransform("/request/domains/")
-            .then(r => this._randStr() + this._randArr(r))
-            .then(a => this.mailbox.address = a)
-            .then(e => console.log(e));
-    }
-
-    _genNamedMail(name = this.mailbox.address) {
-        return this._fetchTransform("/request/domains/")
-            .then(r => name + this._randArr(r))
-            .then(a => this.mailbox.address = a);
-    }
-
-    createMailbox(name = this.mailbox.address) {
-        return name ? this._genNamedMail(name).then(this.getMessages) : this._genRandomMail().then(this.getMessages);
-    }
-
-    deleteMessage(msgId) {
-        return this._fetchTransform(`/request/delete/id/${msgId}`)
-    }
-
-    getMessages(addr = this.mailbox.address) {
-        return this._hashAddress(addr)
-            .then(hash => this._fetchTransform(`/request/mail/id/${hash}`))
+    getMessages(x = this.mailbox.address) {
+        return _getMessages(x).then(r => console.log(r))
             .then(m => this.mailbox.messages = m)
     }
 
     getMailbox() {
+        console.log(this.mailbox)
         return this.mailbox
+    }
+
+    getLatestMail(m = this.mailbox.messages) {
+        console.log(m)
+        return m != typeof Object ? m[m.length] : m.error
     }
 }
 
