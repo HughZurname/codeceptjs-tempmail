@@ -9,7 +9,7 @@ const _hashAddress = (str) => (new Promise((resolve, reject) => (
 )))
 
 const _transformResponse = (res) => (new Promise((resolve, reject) => (
-    typeof res === typeof {} ? resolve(res.json()) : reject("Invalid data type")
+    typeof res === 'object' ? resolve(res.json()) : reject("Invalid data type")
 )))
 
 const _fetchTransform = (path) => (
@@ -44,26 +44,7 @@ const _getMessages = (addr) => (
     .then(hash => _fetchTransform(`/request/mail/id/${hash}`))
 )
 
-const _retryMail = (addr) => {
-    promiseRetry((retry, number) => {
-        return _getMessages(addr)
-            .then(res => {
-                if (!res[i]) {
-                    retry(res);
-                }
-                return res;
-            });
-    });
-}
-
-/**
- * Helper with queryable diespoable mailbox api for use in tests.
- */
 class Mailbox extends Helper {
-    /**
-     * 
-     * @param {Object} config configuration can be overridded by values found in `codecept.json
-     */
     constructor(config) {
         super(config)
         this.mailbox = {
@@ -73,18 +54,22 @@ class Mailbox extends Helper {
     }
 
     createMailbox(x) {
-        _createAddress(x).then(a => this.mailbox.address = a)
+        _createAddress(x)
+            .then(a => this.mailbox.address = a)
             .then(_getMessages)
             .then(m => this.mailbox.messages = m)
 
         return this.mailbox
     }
 
-    deleteMessage(x = this.mailbox.messages) {
-        !x[0].mail_id ? x = '' : x[0].mail_id
+    deleteMessage(x) {
+        const y = this.mailbox.messages
+
+        x = !x && y.length > 0 ? y[0].mail_id : x
+
         _deleteMessage(x)
 
-        return this.getMessages()
+        return this.getMessages(this.mailbox.address)
     }
 
     getMessages(x = this.mailbox.address) {
@@ -98,16 +83,28 @@ class Mailbox extends Helper {
         return this.mailbox
     }
 
-    getLatestMail(x = this.mailbox) {
-        this.getMessages(x.address)
-        return x != typeof Object ? x.messages[x.messages.length - 1] : x.messages
+    getLatestMail(x = this.mailbox.address) {
+        return _getMessages(x)
+            .then(m => m != typeof Object ? m[m.length - 1] : m)
+            .then(r => this.mailbox.latest = r)
+    }
+
+    getMailById(id) {
+        return this.mailbox.messages.filter(obj => {
+            return obj.mail_id == id
+        })
     }
 
     waitForMail(x = this.mailbox.address) {
-        _retryMail(x)
-            .then(m => this.mailbox.messages = m)
-
-        return this.mailbox.messages
+        promiseRetry((retry, number) => {
+            return _getMessages(x)
+                .then(res => {
+                    if (res == typeof Object) {
+                        retry(res);
+                    }
+                    return this.mailbox.messages = res;
+                });
+        });
     }
 }
 
