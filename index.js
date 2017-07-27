@@ -45,6 +45,10 @@ const _getMessages = (addr) => (
 )
 
 class Mailbox extends Helper {
+  /**
+   * 
+   * @param {Object} config configuration can be overridded by values found in `codecept.json
+   */
     constructor(config) {
         super(config)
         this.mailbox = {
@@ -64,9 +68,7 @@ class Mailbox extends Helper {
 
     deleteMessage(x) {
         const y = this.mailbox.messages
-
         x = !x && y.length > 0 ? y[0].mail_id : x
-
         _deleteMessage(x)
 
         return this.getMessages(this.mailbox.address)
@@ -84,9 +86,11 @@ class Mailbox extends Helper {
     }
 
     getLatestMail(x = this.mailbox.address) {
-        return _getMessages(x)
-            .then(m => m != typeof Object ? m[m.length - 1] : m)
+        _getMessages(x)
+            .then(m => m != typeof "object" ? m[m.length - 1] : m)
             .then(r => this.mailbox.latest = r)
+
+        return this.mailbox.latest
     }
 
     getMailById(id) {
@@ -94,17 +98,19 @@ class Mailbox extends Helper {
             return obj.mail_id == id
         })
     }
-
     waitForMail(x = this.mailbox.address) {
         promiseRetry((retry, number) => {
             return _getMessages(x)
                 .then(res => {
-                    if (res == typeof Object) {
+                    if (!Array.isArray(res)) {
                         retry(res);
                     }
                     return this.mailbox.messages = res;
-                });
+                })
+                .then(m => m[m.length - 1])
+                .then(r => this.mailbox.latest = r);
         });
+        return this.mailbox.latest;
     }
 }
 

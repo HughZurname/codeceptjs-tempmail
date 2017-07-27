@@ -1,0 +1,8 @@
+toc:
+  - name: Intro
+    file: intro.md
+  - name: Config
+    file: config.md
+  - TempMail
+  - name: Example
+    file: example.md
