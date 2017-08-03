@@ -1,0 +1,1 @@
+[Codecept](http://codecept.io/) Helper with that consumes the [temp-mail.ru](https://temp-mail.ru/en/api/) api for test scenarios that require email interaction. An example scenario can be found [below](#example)
