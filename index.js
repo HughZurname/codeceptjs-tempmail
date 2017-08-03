@@ -43,7 +43,7 @@ class Mailbox extends Helper {
 
   /**
     * 
-    * @param {object} x [{address:"", messages:[]}] - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
+    * @param {object=} x - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
     */
   deleteLatestMessage(x = this.mailbox) {
     if (x.messages !== [] && !Array.isArray(x.messages)) {
@@ -54,7 +54,7 @@ class Mailbox extends Helper {
   }
   /**
      * 
-     * @param {object} x [{address:"", messages:[]}] - Takes a mailbox object and uses the address to get messages.
+     * @param {object=} x - Takes a mailbox object and uses the address to get messages.
      */
   getMessages(x = this.mailbox) {
     return _getMessages(x.address)
@@ -69,7 +69,7 @@ class Mailbox extends Helper {
   }
   /**
  * 
- * @param {*} x {object} x [{address:"", messages:[]}] - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
+ * @param {*} x {object=} x - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
  * 
  */
   getLatestMessage(x = this.mailbox) {
@@ -90,7 +90,7 @@ class Mailbox extends Helper {
   }
   /**
  * 
- * @param {*} x {object} x [{address:"", messages:[]}] - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated.
+ * @param {object=} x - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated.
  */
   waitForMessage(x = this.mailbox) {
     return promiseRetry(retry => {
