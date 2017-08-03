@@ -74,15 +74,13 @@ Helper with disposable mailbox api that is availible within test execution.
 
 **Parameters**
 
--   `name` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** [something] - Mailbox name, i.e. the email address for the newly created mailbox.
+-   `name` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Optional string to be used in mainlbox address
 
 **Examples**
 
 ```javascript
-{
- address: "taij1q1j8n8@doanart.com", 
- messages: {error: "there are no messages yet"}
-}
+I.createMailbox('testmail') //{address: "testmail@doanart.com", messages: {error: "there are no messages yet"}}
+I.createMailbox() //{address: "taij1q1j8n8@doanart.com", messages: {error: "there are no messages yet"}}
 ```
 
 Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** Creates a mailbox object and checks for mail before returning.
@@ -91,13 +89,13 @@ Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 **Parameters**
 
--   `x` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server. (optional, default `this.mailbox`)
+-   `mailbox` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server. (optional, default `this.mailbox`)
 
 ### getMessages
 
 **Parameters**
 
--   `x` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and uses the address to get messages. (optional, default `this.mailbox`)
+-   `mailbox` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and uses the address to get messages. (optional, default `this.mailbox`)
 
 ### getMailbox
 
@@ -107,7 +105,7 @@ Returns **any** The mailbox object in it's current state, i.e. if you have calle
 
 **Parameters**
 
--   `x` **any** {object=} x - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server. (optional, default `this.mailbox`)
+-   `mailbox` **any** {object=} mailbox - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server. (optional, default `this.mailbox`)
 
 ### getMailById
 
@@ -119,7 +117,7 @@ Returns **any** The mailbox object in it's current state, i.e. if you have calle
 
 **Parameters**
 
--   `x` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated. (optional, default `this.mailbox`)
+-   `mailbox` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated. (optional, default `this.mailbox`)
 
 ## Example
 

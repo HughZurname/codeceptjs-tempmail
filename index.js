@@ -22,13 +22,11 @@ class Mailbox extends Helper {
   }
   /**
      * 
-     * @param {string} name [something] - Mailbox name, i.e. the email address for the newly created mailbox. 
+     * @param {string=} name - Optional string to be used in mainlbox address  
      * @returns {object} - Creates a mailbox object and checks for mail before returning.
      * @example 
-     * {
-     *  address: "taij1q1j8n8@doanart.com", 
-     *  messages: {error: "there are no messages yet"}
-     * }
+     * I.createMailbox('testmail') //{address: "testmail@doanart.com", messages: {error: "there are no messages yet"}}
+     * I.createMailbox() //{address: "taij1q1j8n8@doanart.com", messages: {error: "there are no messages yet"}}
      */
   createMailbox(name) {
     const y = this.mailbox;
@@ -43,22 +41,22 @@ class Mailbox extends Helper {
 
   /**
     * 
-    * @param {object=} x - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
+    * @param {object=} mailbox - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
     */
-  deleteLatestMessage(x = this.mailbox) {
-    if (x.messages !== [] && !Array.isArray(x.messages)) {
-      let y = x.messages.pop();
+  deleteLatestMessage(mailbox = this.mailbox) {
+    if (mailbox.messages !== [] && !Array.isArray(mailbox.messages)) {
+      let y = mailbox.messages.pop();
       return _deleteMessage(y.mail_id);
     }
     return;
   }
   /**
      * 
-     * @param {object=} x - Takes a mailbox object and uses the address to get messages.
+     * @param {object=} mailbox - Takes a mailbox object and uses the address to get messages.
      */
-  getMessages(x = this.mailbox) {
-    return _getMessages(x.address)
-      .then(m => (x.messages = m))
+  getMessages(mailbox = this.mailbox) {
+    return _getMessages(mailbox.address)
+      .then(m => (mailbox.messages = m))
       .catch(error => this.lastError);
   }
   /**
@@ -69,19 +67,19 @@ class Mailbox extends Helper {
   }
   /**
  * 
- * @param {*} x {object=} x - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
+ * @param {*} mailbox {object=} mailbox - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
  * 
  */
-  getLatestMessage(x = this.mailbox) {
-    _getMessages(x.address)
-      .then(m => (m != typeof "object" ? (x.latest = m.pop()) : (x.latest = m)))
+  getLatestMessage(mailbox = this.mailbox) {
+    _getMessages(mailbox.address)
+      .then(m => (m != typeof "object" ? (mailbox.latest = m.pop()) : (mailbox.latest = m)))
       .catch(error => this.lastError);
 
-    return x.latest;
+    return mailbox.latest;
   }
   /**
  * 
- * @param {string} id Takes a mail_id string and returns it from the `mailbox.messages` array
+ * @param {string} id - Takes a mail_id string and returns it from the `mailbox.messages` array
  */
   getMailById(id) {
     return this.mailbox.messages.filter(obj => {
@@ -90,18 +88,18 @@ class Mailbox extends Helper {
   }
   /**
  * 
- * @param {object=} x - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated.
+ * @param {object=} mailbox - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated.
  */
-  waitForMessage(x = this.mailbox) {
+  waitForMessage(mailbox = this.mailbox) {
     return promiseRetry(retry => {
-      return _getMessages(x.address)
+      return _getMessages(mailbox.address)
         .then(res => {
           if (!Array.isArray(res)) {
             retry(res);
           }
-          return (x.messages = res);
+          return (mailbox.messages = res);
         })
-        .then(m => (x.latest = m.pop()))
+        .then(m => (mailbox.latest = m.pop()))
         .catch(error => this.lastError);
     });
   }
