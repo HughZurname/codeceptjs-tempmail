@@ -155,7 +155,7 @@ Scenario("Activation Email", function* (I) {
     activationLink = yield I.grabRegex(null, mailbox.latest.mail_text);
 });
 
-Scenario("5862 Login", (I) => {
+Scenario("Login", (I) => {
     I.amOnPage(activationLink);
     I.waitForText("Email Address Verified");
     I.see("Login");
