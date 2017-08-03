@@ -1,6 +1,6 @@
 {
   "name": "codeceptjs-tempmail",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Codecept Helper using temp-mail.ru api for email testing",
   "main": "index.js",
   "author": "Craig de Gouveia <craig.degouveia@gmail.com>",
