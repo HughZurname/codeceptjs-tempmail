@@ -8,9 +8,9 @@ const promiseRetry = require("promise-retry");
 
 class Mailbox extends Helper {
     /**
-    *
-    * @param {Object} config configuration can be overridded by values found in `codecept.json`
-    */
+     *
+     * @param {Object} config configuration can be overridded by values found in `codecept.json`
+     */
     constructor(config) {
         super(config);
         this.mailbox = {
@@ -38,11 +38,10 @@ class Mailbox extends Helper {
 
         return y;
     }
-
     /**
-    *
-    * @param {object=} mailbox - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
-    */
+     *
+     * @param {object=} mailbox - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
+     */
     deleteLatestMessage(mailbox = this.mailbox) {
         if (mailbox.messages !== [] && !Array.isArray(mailbox.messages)) {
             let y = mailbox
@@ -53,13 +52,12 @@ class Mailbox extends Helper {
         return;
     }
     /**
-     *
-     * @param {object=} mailbox - Takes a mailbox object and uses the address to get messages.
+     * @returns The mailbox object in it's current state, i.e. if you have called the methods elsewhere in this file without arguments, the Mailbox object is updated internally. This returns it.
+     * @param {boolean} debug - Logs the mailbox out to the console to aid debugging.
      */
-    getMessages(mailbox = this.mailbox) {
-        return _getMessages(mailbox.address)
-            .then(m => (mailbox.messages = m))
-            .catch(error => this.lastError);
+    getMailbox(debug = false) {
+        debug && console.log(this.mailbox)
+        return this.mailbox;
     }
     /**
      * @returns The mailbox object in it's current state, i.e. if you have called the methods elsewhere in this file without arguments, the Mailbox object is updated internally. This returns it.
@@ -68,21 +66,21 @@ class Mailbox extends Helper {
         return this.mailbox;
     }
     /**
- *
- * @param {*} mailbox {object=} mailbox - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
- *
- */
+     *
+     * @param {*} mailbox {object=} mailbox - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
+     *
+     */
     getLatestMessage(mailbox = this.mailbox) {
-        _getMessages(mailbox.address).then(m => (m != typeof "object"
-            ? (mailbox.latest = m.pop())
-            : (mailbox.latest = m))).catch(error => this.lastError);
+        _getMessages(mailbox.address).then(m => (m != typeof "object" ?
+            (mailbox.latest = m.pop()) :
+            (mailbox.latest = m))).catch(error => this.lastError);
 
         return mailbox.latest;
     }
     /**
- *
- * @param {string} id - Takes a mail_id string and returns it from the `mailbox.messages` array
- */
+     *
+     * @param {string} id - Takes a mail_id string and returns it from the `mailbox.messages` array
+     */
     getMailById(id) {
         return this
             .mailbox
@@ -92,17 +90,17 @@ class Mailbox extends Helper {
             });
     }
     /**
- *
- * @param {object=} mailbox - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated.
- */
+     *
+     * @param {object=} mailbox - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated.
+     */
     waitForMessage(mailbox = this.mailbox) {
         return promiseRetry(retry => {
             return _getMessages(mailbox.address).then(res => {
-                if (!Array.isArray(res)) {
-                    retry(res);
-                }
-                return (mailbox.messages = res);
-            })
+                    if (!Array.isArray(res)) {
+                        retry(res);
+                    }
+                    return (mailbox.messages = res);
+                })
                 .then(m => (mailbox.latest = m.pop()))
                 .catch(error => this.lastError);
         });
@@ -111,9 +109,9 @@ class Mailbox extends Helper {
 
 const apiUrl = "http://api.temp-mail.ru";
 
-const _hashAddress = str => new Promise((resolve, reject) => str
-    ? resolve(crypto.createHash("md5").update(str).digest("hex"))
-    : reject("No string provided"));
+const _hashAddress = str => new Promise((resolve, reject) => str ?
+    resolve(crypto.createHash("md5").update(str).digest("hex")) :
+    reject("No string provided"));
 
 const _transformResponse = res => res.json();
 
@@ -130,9 +128,9 @@ const _genRandomMail = () => _fetchTransform("/request/domains/").then(r => _ran
 
 const _genNamedMail = str => _fetchTransform("/request/domains/").then(r => str + _randArrayItem(r));
 
-const _createAddress = name => (name
-    ? _genNamedMail(name)
-    : _genRandomMail());
+const _createAddress = name => (name ?
+    _genNamedMail(name) :
+    _genRandomMail());
 
 const _deleteMessage = msgId => _fetchTransform(`/request/delete/id/${msgId}`);
 

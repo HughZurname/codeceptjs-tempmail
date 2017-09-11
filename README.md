@@ -8,8 +8,8 @@
     -   [constructor](#constructor)
     -   [createMailbox](#createmailbox)
     -   [deleteLatestMessage](#deletelatestmessage)
-    -   [getMessages](#getmessages)
     -   [getMailbox](#getmailbox)
+    -   [getMailbox](#getmailbox-1)
     -   [getLatestMessage](#getlatestmessage)
     -   [getMailById](#getmailbyid)
     -   [waitForMessage](#waitformessage)
@@ -91,11 +91,13 @@ Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refer
 
 -   `mailbox` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server. (optional, default `this.mailbox`)
 
-### getMessages
+### getMailbox
 
 **Parameters**
 
--   `mailbox` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and uses the address to get messages. (optional, default `this.mailbox`)
+-   `debug` **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Logs the mailbox out to the console to aid debugging. (optional, default `false`)
+
+Returns **any** The mailbox object in it's current state, i.e. if you have called the methods elsewhere in this file without arguments, the Mailbox object is updated internally. This returns it.
 
 ### getMailbox
 
@@ -155,7 +157,7 @@ Scenario("Activation Email", function* (I) {
     activationLink = yield I.grabRegex(null, mailbox.latest.mail_text);
 });
 
-Scenario("Login", (I) => {
+Scenario("5862 Login", (I) => {
     I.amOnPage(activationLink);
     I.waitForText("Email Address Verified");
     I.see("Login");
