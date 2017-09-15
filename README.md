@@ -58,7 +58,7 @@ exports.config = {
 
 **Extends Helper**
 
-Helper with disposable mailbox api that is availible within test execution.
+Helper with disposable mailbox api that is available within test execution.
 
 **Parameters**
 
@@ -68,7 +68,7 @@ Helper with disposable mailbox api that is availible within test execution.
 
 **Parameters**
 
--   `config` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** configuration can be overridded by values found in `codecept.json`
+-   `config` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** configuration can be overridden by values found in `codecept.json`
 
 ### createMailbox
 
@@ -119,7 +119,7 @@ Returns **any** The mailbox object in it's current state, i.e. if you have calle
 
 **Parameters**
 
--   `mailbox` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated. (optional, default `this.mailbox`)
+-   `mailbox` **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitable response is received the `mailbox.messages` and `mailbox.latest` are updated. (optional, default `this.mailbox`)
 
 ## Example
 

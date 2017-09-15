@@ -3,96 +3,96 @@ const fetch = require("node-fetch");
 const promiseRetry = require("promise-retry");
 
 /**
- * Helper with disposable mailbox api that is availible within test execution.
+ * Helper with disposable mailbox api that is available within test execution.
  */
 
 class Mailbox extends Helper {
     /**
      *
-     * @param {Object} config configuration can be overridded by values found in `codecept.json`
+     * @param {Object} config configuration can be overridden by values found in `codecept.json`
      */
     constructor(config) {
-        super(config);
-        this.mailbox = {
-            address: "",
-            messages: []
-        };
-        this.options = {};
-        Object.assign(this.options, config);
-    }
-    /**
-     *
-     * @param {string=} name - Optional string to be used in mainlbox address
-     * @returns {object} - Creates a mailbox object and checks for mail before returning.
-     * @example
-     * I.createMailbox('testmail') //{address: "testmail@doanart.com", messages: {error: "there are no messages yet"}}
-     * I.createMailbox() //{address: "taij1q1j8n8@doanart.com", messages: {error: "there are no messages yet"}}
-     */
-    createMailbox(name) {
-        const y = this.mailbox;
-
-        _createAddress(name)
-            .then(a => (y.address = a))
-            .then(_getMessages)
-            .then(m => (y.messages = m));
-
-        return y;
-    }
-    /**
-     *
-     * @param {object=} mailbox - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
-     */
-    deleteLatestMessage(mailbox = this.mailbox) {
-        if (mailbox.messages !== [] && !Array.isArray(mailbox.messages)) {
-            let y = mailbox
-                .messages
-                .pop();
-            return _deleteMessage(y.mail_id);
+            super(config);
+            this.mailbox = {
+                address: "",
+                messages: []
+            };
+            this.options = {};
+            Object.assign(this.options, config);
         }
-        return;
-    }
-    /**
-     * @returns The mailbox object in it's current state, i.e. if you have called the methods elsewhere in this file without arguments, the Mailbox object is updated internally. This returns it.
-     * @param {boolean} debug - Logs the mailbox out to the console to aid debugging.
-     */
-    getMailbox(debug = false) {
-        debug && console.log(this.mailbox)
-        return this.mailbox;
-    }
-    /**
-     * @returns The mailbox object in it's current state, i.e. if you have called the methods elsewhere in this file without arguments, the Mailbox object is updated internally. This returns it.
-     */
-    getMailbox() {
-        return this.mailbox;
-    }
-    /**
-     *
-     * @param {*} mailbox {object=} mailbox - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
-     *
-     */
-    getLatestMessage(mailbox = this.mailbox) {
-        _getMessages(mailbox.address).then(m => (m != typeof "object" ?
-            (mailbox.latest = m.pop()) :
-            (mailbox.latest = m))).catch(error => this.lastError);
+        /**
+         *
+         * @param {string=} name - Optional string to be used in mainlbox address
+         * @returns {object} - Creates a mailbox object and checks for mail before returning.
+         * @example
+         * I.createMailbox('testmail') //{address: "testmail@doanart.com", messages: {error: "there are no messages yet"}}
+         * I.createMailbox() //{address: "taij1q1j8n8@doanart.com", messages: {error: "there are no messages yet"}}
+         */
+    createMailbox(name) {
+            const y = this.mailbox;
 
-        return mailbox.latest;
-    }
-    /**
-     *
-     * @param {string} id - Takes a mail_id string and returns it from the `mailbox.messages` array
-     */
+            _createAddress(name)
+                .then(a => (y.address = a))
+                .then(_getMessages)
+                .then(m => (y.messages = m));
+
+            return y;
+        }
+        /**
+         *
+         * @param {object=} mailbox - Takes a mailbox object and detletes the last (i.e. most recent) value from messages and the mail server.
+         */
+    deleteLatestMessage(mailbox = this.mailbox) {
+            if (mailbox.messages !== [] && !Array.isArray(mailbox.messages)) {
+                let y = mailbox
+                    .messages
+                    .pop();
+                return _deleteMessage(y.mail_id);
+            }
+            return;
+        }
+        /**
+         * @returns The mailbox object in it's current state, i.e. if you have called the methods elsewhere in this file without arguments, the Mailbox object is updated internally. This returns it.
+         * @param {boolean} debug - Logs the mailbox out to the console to aid debugging.
+         */
+    getMailbox(debug = false) {
+            debug && console.log(this.mailbox)
+            return this.mailbox;
+        }
+        /**
+         * @returns The mailbox object in it's current state, i.e. if you have called the methods elsewhere in this file without arguments, the Mailbox object is updated internally. This returns it.
+         */
+    getMailbox() {
+            return this.mailbox;
+        }
+        /**
+         *
+         * @param {*} mailbox {object=} mailbox - Takes a mailbox object and assigns a `mailbox.latest` object with the last (i.e. most recent) value in the messages array returned from the server.
+         *
+         */
+    getLatestMessage(mailbox = this.mailbox) {
+            _getMessages(mailbox.address).then(m => (m != typeof "object" ?
+                (mailbox.latest = m.pop()) :
+                (mailbox.latest = m))).catch(error => this.lastError);
+
+            return mailbox.latest;
+        }
+        /**
+         *
+         * @param {string} id - Takes a mail_id string and returns it from the `mailbox.messages` array
+         */
     getMailById(id) {
-        return this
-            .mailbox
-            .messages
-            .filter(obj => {
-                return obj.mail_id == id;
-            });
-    }
-    /**
-     *
-     * @param {object=} mailbox - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitible response is recieved the `mailbox.messages` and `mailbox.latest` are updated.
-     */
+            return this
+                .mailbox
+                .messages
+                .filter(obj => {
+                    return obj.mail_id == id;
+                });
+        }
+        /**
+         *
+         * @param {object=} mailbox - Takes a mailbox object and makes 10 attempts at retrieving messages from the server. Once a suitable response is received the `mailbox.messages` and `mailbox.latest` are updated.
+         */
     waitForMessage(mailbox = this.mailbox) {
         return promiseRetry(retry => {
             return _getMessages(mailbox.address).then(res => {
